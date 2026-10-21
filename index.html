@@ -1,34 +1,81 @@
+---
+layout: null
+---
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Patient-to-patient guide to living with metastatic breast cancer.">
-  <title>MBC Guide | Patient Q&amp;A</title>
+  <meta name="description" content="Patient-to-patient guides and resources about living with metastatic breast cancer.">
+  <title>MBC Guide | Patient Resources</title>
   <style>
-    :root { color-scheme: light; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: #f9f6f8; color: #302934; }
-    main { max-width: 1000px; margin: auto; padding: clamp(20px, 4vw, 48px); }
-    h1 { margin-bottom: 8px; font-size: clamp(1.7rem, 4vw, 2.5rem); }
-    p { line-height: 1.55; }
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; }
-    a.button { background: #794667; color: white; text-decoration: none; border-radius: 8px; padding: 12px 18px; font-weight: 600; }
-    a.secondary { background: white; color: #794667; border: 1px solid #794667; }
-    iframe { display: block; background: white; border: 1px solid #ddd0d9; border-radius: 8px; width: 100%; height: 75vh; min-height: 460px; }
-    .note { font-size: .9rem; color: #5c5261; }
+    :root { font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:#302934; background:#f9f6f8; }
+    * { box-sizing:border-box; }
+    body { margin:0; }
+    main { max-width:1000px; margin:auto; padding:clamp(20px,4vw,48px); }
+    h1 { font-size:clamp(1.7rem,4vw,2.5rem); margin-bottom:8px; }
+    p { line-height:1.55; }
+    .library { display:grid; gap:12px; padding:0; list-style:none; margin:24px 0; }
+    .file { background:white; border:1px solid #ddd0d9; border-radius:10px; padding:16px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .file-title { font-size:1rem; font-weight:650; overflow-wrap:anywhere; }
+    .buttons { display:flex; flex-wrap:wrap; gap:8px; }
+    a.button,button.button { font:inherit; font-size:.94rem; font-weight:600; background:#794667; color:white; border:1px solid #794667; border-radius:8px; padding:10px 14px; text-decoration:none; cursor:pointer; }
+    a.secondary { background:white; color:#794667; }
+    iframe { background:white; width:100%; height:75vh; min-height:460px; border:1px solid #ddd0d9; border-radius:8px; display:block; }
+    .note { font-size:.9rem; color:#5c5261; }
+    #preview-heading { overflow-wrap:anywhere; }
   </style>
 </head>
 <body>
   <main>
     <h1>Living with Metastatic Breast Cancer</h1>
-    <p>Patient-to-patient questions and answers.</p>
-    <div class="actions">
-      <a class="button" href="./kisqali-patient-qa.pdf" target="_blank" rel="noopener">Open the PDF</a>
-      <a class="button secondary" href="./kisqali-patient-qa.pdf" download>Download PDF</a>
-    </div>
-    <iframe title="Kisqali patient questions and answers PDF" src="./kisqali-patient-qa.pdf"></iframe>
-    <p class="note">If the document does not appear above, use “Open the PDF.” This resource shares patient experiences and does not replace advice from your medical team.</p>
+    <p>Patient-to-patient guides and resources.</p>
+    <h2>PDF Library</h2>
+    <p>Select <strong>View</strong> to read a guide below, or download a copy.</p>
+    <ul class="library">
+      {% assign pdf_count = 0 %}
+      {% assign pdf_files = site.static_files | sort: "name" %}
+      {% for file in pdf_files %}
+        {% assign extension = file.extname | downcase %}
+        {% if extension == '.pdf' %}
+          {% assign pdf_count = pdf_count | plus: 1 %}
+          {% assign file_label = file.name | remove: file.extname | replace: '-', ' ' | replace: '_', ' ' %}
+          <li class="file">
+            <span class="file-title">{{ file_label | escape }}</span>
+            <span class="buttons">
+              <button class="button view-pdf" type="button" data-pdf="{{ file.path | relative_url | escape }}" data-title="{{ file_label | escape }}">View</button>
+              <a class="button secondary" href="{{ file.path | relative_url }}" download>Download PDF</a>
+            </span>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% if pdf_count == 0 %}
+      <p>No PDF documents have been uploaded yet.</p>
+    {% else %}
+      <section aria-label="PDF preview">
+        <h2 id="preview-heading">PDF preview</h2>
+        <p><a id="open-pdf" href="#" target="_blank" rel="noopener">Open selected PDF in a new tab</a></p>
+        <iframe id="pdf-viewer" title="Selected patient guide PDF"></iframe>
+      </section>
+    {% endif %}
+    <p class="note">These guides share patient experiences and do not replace guidance from your oncology team.</p>
   </main>
+  <script>
+    const buttons = [...document.querySelectorAll('.view-pdf')];
+    const viewer = document.getElementById('pdf-viewer');
+    const heading = document.getElementById('preview-heading');
+    const open = document.getElementById('open-pdf');
+    function choose(button) {
+      if (!viewer) return;
+      viewer.src = button.dataset.pdf;
+      viewer.title = button.dataset.title + ' PDF';
+      heading.textContent = button.dataset.title;
+      open.href = button.dataset.pdf;
+      buttons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+    }
+    buttons.forEach(b => b.addEventListener('click', () => choose(b)));
+    if (buttons.length) choose(buttons[0]);
+  </script>
 </body>
 </html>
