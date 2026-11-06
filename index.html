@@ -29,7 +29,7 @@ layout: null
     <h1>Living with Metastatic Breast Cancer</h1>
     <p>Patient-to-patient guides and resources.</p>
     <h2>Patient Resource Library</h2>
-    <p>Select <strong>View PDF</strong> to open a guide in this tab, or use <strong>View on GitHub</strong> if your browser cannot display it.</p>
+    <p>Select <strong>View PDF</strong> to open a guide in a new tab, or download a copy.</p>
     <ul class="library">
       {% assign pdf_count = 0 %}
       {% assign pdf_files = site.static_files | sort: "name" %}
@@ -41,7 +41,7 @@ layout: null
           <li class="file">
             <span class="file-title">{{ file_label | escape }}</span>
             <span class="buttons">
-              <a class="button" href="{{ file.path | relative_url | escape }}">View PDF</a>
+              <a class="button" href="https://github.com/connie-repo/MBC-guide/blob/main{{ file.path | escape }}" target="_blank" rel="noopener noreferrer">View PDF</a>
               <a class="button secondary" href="{{ file.path | relative_url | escape }}" download>Download PDF</a>
               <a class="button secondary" href="https://github.com/connie-repo/MBC-guide/blob/main{{ file.path | escape }}">View on GitHub</a>
             </span>
