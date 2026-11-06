@@ -41,7 +41,7 @@ layout: null
           <li class="file">
             <span class="file-title">{{ file_label | escape }}</span>
             <span class="buttons">
-              <a class="button" href="https://github.com/connie-repo/MBC-guide/blob/main{{ file.path | escape }}" target="_blank" rel="noopener noreferrer">View PDF</a>
+              <a class="button" href="{{ file.path | relative_url | escape }}" target="_blank" rel="noopener noreferrer">View PDF</a>
               <a class="button secondary" href="{{ file.path | relative_url | escape }}" download>Download PDF</a>
             </span>
           </li>
